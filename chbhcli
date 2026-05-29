@@ -10,13 +10,8 @@ VENV_DIR="$CWD/.venv"
 
 # Installs chbhcli so it's accessable from anywhere. 
 cmd_install() {
-    # Warning: Currently doesn't work
-    if ! grep -q 'alias chbhcli' "$HOME/.bashrc"; then
-	    echo "alias chbhcli=\"bash $SWD/chbhcli\"" >> "$HOME/.bashrc"
-    fi
-   echo "Installed! Run: source ~/.bashrc"
-  echo "You can use the chbhcli from anywhere" 
-
+    chmod +x "$SWD/chbhcli"
+    echo "You can not run just: chbhcli meg_env"
 }
 
 # Creates a general purpose MEG environment using UV
