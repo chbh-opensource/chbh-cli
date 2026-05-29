@@ -11,7 +11,7 @@ VENV_DIR="$CWD/.venv"
 # Installs chbhcli so it's accessable from anywhere. 
 cmd_install() {
     chmod +x "$SWD/chbhcli"
-    echo "You can now just with just: ./chbhcli meg_env"
+    echo "You can now run commands with just: ./chbhcli meg_env"
 }
 
 # Creates a general purpose MEG environment using UV
@@ -27,6 +27,12 @@ cmd_meg_env() {
     )
     echo "Environment set up"
     echo "Active using: source .venv/bin/activate"
+    git config --global init.defaultBranch main
+    git init
+    echo "Adding documentation"
+    touch README.md
+    echo "README added"
+    echo "To activate environment use: source .venv/bin/activate"
 }
 
 # Manages bash inputs
