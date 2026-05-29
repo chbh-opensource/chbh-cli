@@ -11,7 +11,7 @@ VENV_DIR="$CWD/.venv"
 # Installs chbhcli so it's accessable from anywhere. 
 cmd_install() {
     chmod +x "$SWD/chbhcli"
-    echo "You can not run just: chbhcli meg_env"
+    echo "You can now just with just: ./chbhcli meg_env"
 }
 
 # Creates a general purpose MEG environment using UV
