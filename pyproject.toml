@@ -1,13 +1,52 @@
 [project]
-name = "bear-cli"
+name = "chbh-cli"
 version = "0.1.0"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
+
 dependencies = [
-    "matplotlib>=3.10.9",
-    "mne==1.7.1",
-    "nibabel>=5.4.2",
-    "numpy>=2.4.6",
-    "pandas>=3.0.3",
-    "scikit-learn>=1.8.0",
-    "scipy>=1.17.1",
+    "numpy",
+    "scipy",
+    "ipython",
+    # Visualisation
+    "matplotlib",
+    "pyside6<6.9",
+    # Stats
+    "scikit-learn",
+    "pandas",
+    "polars",
+]
+
+[dependency-groups]
+
+meeg = [
+    "mne",
+    "mne-bids",
+    "mne-connectivity",
+    "neurokit2",
+    "specparam",
+    "sails",
+]
+
+mri = [
+    "nibabel",
+    "nilearn",
+    "dipy",
+    "templateflow",
+]
+
+sleep = [
+    "yasa",
+]
+
+dev = [
+    "pytest",
+    "ruff",
+    "setuptools>=41.0.1",
+    "build",
+    "pytest",
+    "pytest-cov", 
+    "coverage",
+    "flake8",
+    "codespell",
+    "twine"
 ]

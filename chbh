@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+
+# Ensures the script crashes rather than creates a bad environment
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$PWD"
+VENV_DIR="$PROJECT_DIR/.venv"
+
+TEMPLATE_DIR="$HOME/.local/share/chbh"
+TEMPLATE_PYPROJECT="$TEMPLATE_DIR/pyproject.toml"
+
+usage() {
+cat <<EOF
+Usage:
+  chbh <group> [group ...]
+
+Available groups:
+  meeg
+  mri
+  sleep
+  dev
+
+Examples:
+
+  chbh meeg
+  chbh mri
+  chbh meeg mri
+  chbh meeg sleep
+  chbh meeg mri sleep
+  chbh meeg mri dev
+EOF
+}
+
+# %% ---------------------
+# Helper functions 
+
+# Installs chbhcli so it's accessable from anywhere. 
+cmd_install() {
+    echo "Installing from: $SCRIPT_DIR to: $HOME/.local/bin"
+    mkdir -p "$HOME/.local/bin"
+    mkdir -p "$HOME/.local/share/chbh"
+
+    install -v -m 755 \
+        "$SCRIPT_DIR/chbh" \
+        "$HOME/.local/bin/chbh"
+
+    install -v -m 644 \
+        "$SCRIPT_DIR/pyproject.toml" \
+        "$HOME/.local/share/chbh/pyproject.toml"
+
+    echo "Installed: $HOME/.local/bin/chbh"
+
+    case ":$PATH:" in
+        *":$HOME/.local/bin:"*)
+            echo "Command available as: chbh"
+            ;;
+        *)
+            echo
+            echo "WARNING: $HOME/.local/bin is not on your PATH."
+            echo
+            echo "Add the following to ~/.bashrc:"
+            echo 'export PATH="$HOME/.local/bin:$PATH"'
+            echo
+            echo "Then reload your shell:"
+            echo "source ~/.bashrc"
+            ;;
+    esac
+}
+
+
+ensure_pyproject() {
+    # Copy installed pyproject toml into current directory
+    local template="$HOME/.local/share/chbh/pyproject.toml"
+
+    if [[ ! -f pyproject.toml ]]; then
+        cp "$template" pyproject.toml
+    else:
+        echo "Using existing pyproject.toml in working dir,"
+        echo "this may not match the CHBH specification."
+    fi
+}
+
+
+# %% ---------------------
+# Maybe show usage 
+
+if [[ $# -eq 0 ]]; then
+    usage
+    exit 1
+fi
+
+
+# %% ---------------------
+# Parse arguments
+
+ARGS=()
+
+for group in "$@"; do
+    case "$group" in
+	install)
+            shift
+	    cmd_install "${1:-user}"
+	    exit 0
+	    ;;
+        meeg|mri|sleep|dev)
+            ARGS+=(--group "$group")
+            ;;
+        *)
+            echo "Unknown group: $group"
+            echo
+            usage
+            exit 1
+            ;;
+    esac
+done
+
+# %% ---------------------
+# Main Installation
+
+ensure_pyproject
+
+uv sync "${ARGS[@]}"
+
+cat <<EOF
+
+Environment ready.
+
+Activate with:
+
+    source .venv/bin/activate
+
+Installed groups:
+
+    $*
+
+EOF
