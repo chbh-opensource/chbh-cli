@@ -10,25 +10,58 @@ VENV_DIR="$PROJECT_DIR/.venv"
 TEMPLATE_DIR="$HOME/.local/share/chbh"
 TEMPLATE_PYPROJECT="$TEMPLATE_DIR/pyproject.toml"
 
+
 usage() {
 cat <<EOF
+CHBH environment manager
+
 Usage:
+  chbh install
+      Install the chbh command and environment template.
+
+  chbh version
+      Show the version of the installed CHBH environment templates.
+
+  chbh bear-modules
+      Load the standard BlueBEAR modules required for CHBH
+      Python environments.
+
   chbh <group> [group ...]
+      Create/update a UV environment in the current directory
+      using one or more dependency groups.
 
 Available groups:
-  meeg
-  mri
-  sleep
-  dev
+  meeg     EEG, MEG and electrophysiology tools
+  mri      MRI and neuroimaging tools
+  sleep    Sleep analysis tools
+  dev      Development and code-quality tools
 
 Examples:
-
   chbh meeg
+      Create a MEEG environment.
+
   chbh mri
+      Create an MRI environment.
+
   chbh meeg mri
+      Create an environment with both MEEG and MRI tools.
+
   chbh meeg sleep
-  chbh meeg mri sleep
-  chbh meeg mri dev
+      Create an electrophysiology and sleep-analysis environment.
+
+  chbh meeg mri sleep dev
+      Install all currently available CHBH groups.
+
+Notes:
+  - A .venv is created in the current working directory.
+  - If no pyproject.toml exists, the CHBH template will be copied
+    into the current directory.
+  - Existing pyproject.toml files are preserved and will be used
+    instead of the CHBH template.
+  - After installation, activate the environment with:
+
+        source .venv/bin/activate
+
 EOF
 }
 
@@ -69,16 +102,36 @@ cmd_install() {
 }
 
 
+cmd_add_base_modules() {
+    module purge
+    module load bluebear
+    module load bear-apps/2023a
+    module load cairo/1.17.8-GCCcore-12.3.0  # For QT in ipython
+    module load uv/0.6.5  # for packages
+}
+
+
 ensure_pyproject() {
     # Copy installed pyproject toml into current directory
     local template="$HOME/.local/share/chbh/pyproject.toml"
 
     if [[ ! -f pyproject.toml ]]; then
         cp "$template" pyproject.toml
-    else:
+    else
         echo "Using existing pyproject.toml in working dir,"
         echo "this may not match the CHBH specification."
     fi
+}
+
+
+cmd_version() {
+    if [[ ! -f "$TEMPLATE_PYPROJECT" ]]; then
+        echo "CHBH template not installed."
+        exit 1
+    fi
+
+    grep '^version = ' "$TEMPLATE_PYPROJECT" \
+        | sed 's/version = "\(.*\)"/\1/'
 }
 
 
@@ -101,6 +154,16 @@ for group in "$@"; do
 	install)
             shift
 	    cmd_install "${1:-user}"
+	    exit 0
+	    ;;
+	version)
+            shift
+	    cmd_version "${1:-user}"
+	    exit 0
+	    ;;
+	bear-modules)
+            shift
+	    cmd_add_base_modules "${1:-user}"
 	    exit 0
 	    ;;
         meeg|mri|sleep|dev)
