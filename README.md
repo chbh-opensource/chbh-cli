@@ -12,14 +12,14 @@ bash ./chbh install
 ```
 
 
-## Setting up an MEG environment
+## Setting up an M/EEG environment
 
 You can create new python environments using the `chbh` command. This will copy a template `pyproject.toml` file into your working directory and initialise a new virtual environment with a range of common tools installed in it.
 
 
 ```bash
 cd /path/to/my/working/directory
-chbh meeg
+chbh venv meeg
 source .venv/bin/activate
 ```
 
