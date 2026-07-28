@@ -45,45 +45,50 @@ Usage:
       Install the chbh command and environment template.
 
   chbh version
-      Show the version of the installed CHBH environment templates.
+      Show the version of the installed CHBH environment template.
 
-  chbh base_module
-      Load the standard BlueBEAR modules required for CHBH
-      Python environments.
+  chbh bear-modules
+      Load the basic BlueBEAR modules recommended for Python by CHBH.
 
-  chbh <group> [group ...]
-      Create/update a UV environment in the current directory
-      using one or more dependency groups.
+  chbh summarise-logs <log-directory>
+      Summarise SLURM logs in the specified directory.
+      This may install a python instance the first time it runs after install.
 
-Available groups:
+  chbh venv <group> [group ...]
+      Create or update a UV environment in the current directory.
+
+Available venv groups:
   meeg     EEG, MEG and electrophysiology tools
   mri      MRI and neuroimaging tools
   sleep    Sleep analysis tools
   dev      Development and code-quality tools
 
 Examples:
-  chbh meeg
-      Create a MEEG environment.
+  chbh install
 
-  chbh mri
-      Create an MRI environment.
+  chbh version
 
-  chbh meeg mri
-      Create an environment with both MEEG and MRI tools.
+  chbh bear-modules
 
-  chbh meeg sleep
-      Create an electrophysiology and sleep-analysis environment.
+  chbh summarise-logs ./logs
 
-  chbh meeg mri sleep dev
-      Install all currently available CHBH groups.
+  chbh venv meeg
+
+  chbh venv mri
+
+  chbh venv meeg mri
+
+  chbh venv meeg sleep
+
+  chbh venv meeg mri sleep dev
 
 Notes:
   - A .venv is created in the current working directory.
-  - If no pyproject.toml exists, the CHBH template will be copied
-    into the current directory.
-  - Existing pyproject.toml files are preserved and will be used
-    instead of the CHBH template.
-  - After installation, activate the environment with:
+  - If no pyproject.toml exists, the CHBH template is copied into
+    the current directory.
+  - Existing pyproject.toml files are preserved and used as-is.
+  - Activate the environment with:
 
         source .venv/bin/activate
+
 ```
